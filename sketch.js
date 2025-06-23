@@ -420,7 +420,7 @@ let estado = "iniciar"; // Estado inicial
 let estadoPaletteIndex = 0; // Paleta para el gradiente del estado de inicio
 
 function preload() {
-  img = loadImage('/img/textura1.jpg');
+  img = loadImage('img/textura1.jpg');
 }
 
 function setup() {
