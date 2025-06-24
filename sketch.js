@@ -420,7 +420,7 @@ let estado = "iniciar"; // Estado inicial
 let estadoPaletteIndex = 0; // Paleta para el gradiente del estado de inicio
 
 function preload() {
-  img = loadImage('img/textura1.jpg');
+  img = loadImage('/img/textura1.jpg');
 }
 
 function setup() {
@@ -518,7 +518,12 @@ function draw() {
 
   if (sonidoInteractivo) sonidoInteractivo.actualizar();
   // Visualización de los valores de sonido
-  if (sonidoInteractivo && sonidoInteractivo.activo && showDataOverlay) { // <--- Modifica aquí
+  if (
+    sonidoInteractivo &&
+    sonidoInteractivo.activo &&
+    showDataOverlay &&
+    estado === "obra" // <-- agrega esta condición
+  ) {
     push();
     fill(0, 0, 100, 200);
     rect(10, 10, 210, 95, 10); // <-- altura aumentada de 80 a 95
@@ -768,39 +773,7 @@ function draw() {
   }
 
   // --- Trigger de conexiones por medios (mid) ---
-  const MID_UMBRAL = 60; // Ajusta según tu micrófono y entorno
-  const FRAMES_MID = 15;  // Frames necesarios para activar (0.25s a 60fps)
-  const MID_COOLDOWN = 350; // milisegundos
-
-  if (sonidoInteractivo && sonidoInteractivo.activo && estado === "obra") {
-    let mid = sonidoInteractivo.mid;
-    if (mid > MID_UMBRAL) {
-      framesMid++;
-      if (
-        framesMid > FRAMES_MID &&
-        millis() - lastMidChange > MID_COOLDOWN
-      ) {
-        showConnections = !showConnections; // Alterna visibilidad
-        // Redibuja el gráfico actual
-        if (currentGraphicIndex >= 0 && graphicsArray[currentGraphicIndex]) {
-          let palette = COLOR_PALETTES[currentPaletteIndex];
-          let pg = createGraphics(width, height);
-          pg.colorMode(HSB, 360, 100, 100);
-          pg.background(palette.background[0], palette.background[1], palette.background[2]);
-          if (showConnections) {
-            for (let conexion of currentConexiones) conexion.display(pg);
-          }
-          for (let celula of currentCelulas) celula.display(pg);
-          graphicsArray[currentGraphicIndex] = pg;
-          graphicsData[currentGraphicIndex].pg = pg;
-        }
-        lastMidChange = millis();
-        framesMid = 0;
-      }
-    } else {
-      framesMid = 0;
-    }
-  }
+ 
 }
 
 // Modifica mousePressed para solo funcionar en estado "obra"
@@ -917,7 +890,9 @@ function keyPressed() {
     regenerarCelulasYConexiones(currentCelulas.length + 1);
   }
   if (key === 'm' || key === 'M') {
-    showDataOverlay = !showDataOverlay;
+    if (estado === "obra") { // <-- agrega esta condición
+      showDataOverlay = !showDataOverlay;
+    }
   }
 }
 
